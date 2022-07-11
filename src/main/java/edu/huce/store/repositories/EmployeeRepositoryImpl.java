@@ -24,13 +24,13 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
     @Override
     public Integer create(Employee employee) throws EtAuthException {
         try {
-            String SQL_CREATE = "INSERT Employees(fullname, birthday, sex, address, phone, accountId) VALUES( ?, ?, ?, ?, ?, ?)";
+            String SQL_CREATE = "INSERT Employees(fullname, birthday, gender, address, phone, accountId) VALUES( ?, ?, ?, ?, ?, ?)";
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(SQL_CREATE, Statement.RETURN_GENERATED_KEYS);
                 ps.setString(1, employee.getFullname());
                 ps.setString(2, employee.getBirthday());
-                ps.setInt(3, employee.getSex());
+                ps.setInt(3, employee.getGender());
                 ps.setString(4, employee.getAddress());
                 ps.setString(5, employee.getPhone());
                 ps.setInt(6, employee.getAccountId());
@@ -45,7 +45,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 
     @Override
     public Employee findById(Integer id) {
-        String SQL_FIND_BY_ID = "SELECT id, fullname, birthday, sex, address, phone, accountId FROM Employees WHERE id = '"
+        String SQL_FIND_BY_ID = "SELECT id, fullname, birthday, gender, address, phone, accountId FROM Employees WHERE id = '"
                 + id + "'";
         List<Employee> employee = jdbcTemplate.query(SQL_FIND_BY_ID, BeanPropertyRowMapper.newInstance(Employee.class));
         return employee.get(0);
@@ -53,7 +53,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 
     @Override
     public List<Employee> findAll() throws EtResourceNotFoundException {
-        String SQL_FIND_ALL = "SELECT id, fullname, birthday, sex, address, phone, accountId FROM Employees";
+        String SQL_FIND_ALL = "SELECT id, fullname, birthday, gender, address, phone, accountId FROM Employees";
         List<Employee> employee = jdbcTemplate.query(SQL_FIND_ALL, BeanPropertyRowMapper.newInstance(Employee.class));
         return employee;
     }

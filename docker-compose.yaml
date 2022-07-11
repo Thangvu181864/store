@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  sqlserver:
+    container_name: sqlserver
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    user: root
+    ports:
+      - 1433:1433
+    volumes:
+      - ./data:/var/lib/mssqlql/data
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Express
+      - SA_PASSWORD=Thangvu_14042001
+  web:
+    container_name: web
+    image: store-spring:latest
+    ports:
+      - 8080:8080
+    depends_on:
+      - sqlserver

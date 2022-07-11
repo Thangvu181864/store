@@ -13,7 +13,7 @@ public class Employee {
     private Integer id;
     private String fullname;
     private String birthday;
-    private Integer sex;
+    private Integer gender;
     private String address;
     private String phone;
     private Integer accountId;
