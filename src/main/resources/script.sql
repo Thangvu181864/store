@@ -188,10 +188,10 @@ VALUES('Quan ly')
 
 INSERT Accounts
     (username,"password",roleId)
-VALUES('Thangvu', '12345678', 1)
+VALUES('Thangvu', '$2a$10$q/1quxeh8vdjDqCJB1a8re17Kbzhr0oYci7tQbJ4nsjMLqpqIqFxa', 2)
 INSERT Accounts
     (username,"password",roleId)
-VALUES('Huyhoang', '87654321', 2)
+VALUES('Huyhoang', '$2a$10$q/1quxeh8vdjDqCJB1a8re17Kbzhr0oYci7tQbJ4nsjMLqpqIqFxa', 1)
 
 
 INSERT Employees
@@ -293,6 +293,9 @@ VALUES( 3, 3,
         FROM Products
         WHERE id = 3) * 20, N'Hoa don 03')
 
+
+SELECT *
+FROM Accounts
 
 
 SELECT *
