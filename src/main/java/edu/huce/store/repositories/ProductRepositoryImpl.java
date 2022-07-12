@@ -49,7 +49,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     public Integer create(Product product)
             throws EtAuthException {
         try {
-            String SQL_CREATE = "INSERT Products( name, priceBuy, priceBuy, vendorId, quantity, image, note) VALUES( ?, ?, ?, ?, ?, ?, ?)";
+            String SQL_CREATE = "INSERT Products( name, priceBuy, priceSell, vendorId, quantity, image, note) VALUES( ?, ?, ?, ?, ?, ?, ?)";
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(SQL_CREATE, Statement.RETURN_GENERATED_KEYS);
@@ -59,7 +59,7 @@ public class ProductRepositoryImpl implements ProductRepository {
                 ps.setInt(4, product.getVendorId());
                 ps.setInt(5, product.getQuantity());
                 ps.setString(6, product.getImage());
-                ps.setString(7, product.getName());
+                ps.setString(7, product.getNote());
                 return ps;
             }, keyHolder);
             return Integer.parseInt(keyHolder.getKeys().get("GENERATED_KEYS").toString());
