@@ -70,6 +70,10 @@ public class AccountController {
                 .compact();
         Map<String, String> map = new HashMap<>();
         map.put("token", token);
+        map.put("id", account.getId().toString());
+        map.put("username", account.getUsername());
+        map.put("roleId", account.getRoleId().toString());
+        map.put("roleId", account.getRoleId().toString());
         return map;
     }
 }

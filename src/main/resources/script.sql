@@ -43,7 +43,7 @@ CREATE TABLE Employees
 (
     id INT IDENTITY PRIMARY KEY NOT NULL,
     fullname NVARCHAR(50) NOT NULL,
-    birthday DATETIME NOT NULL,
+    birthday DATE NOT NULL,
     gender INT NOT NULL,
     "address" NVARCHAR(50) NOT NULL,
     phone VARCHAR(10) NOT NULL UNIQUE,
@@ -84,7 +84,7 @@ CREATE TABLE Invoices
     id INT IDENTITY PRIMARY KEY NOT NULL,
     employeeId INT NOT NULL FOREIGN KEY (employeeId) REFERENCES Employees(id),
     typeInvoice CHAR(20) NOT NULL CHECK(typeInvoice IN('EXPORT','IMPORT')),
-    createAt DATETIME DEFAULT GETDATE(),
+    createAt DATE DEFAULT GETDATE(),
     total MONEY DEFAULT 0,
     note NVARCHAR(100),
 )
