@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import edu.huce.store.models.Product;
 import edu.huce.store.services.ProductService;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
@@ -56,6 +57,15 @@ public class ProductController {
     public ResponseEntity<Map<String, Product>> DeleteProductById(@PathVariable("id") Integer id) {
         Product product = productService.deleteProductById(id);
         Map<String, Product> map = new HashMap<String, Product>();
+        map.put("data", product);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Map<String, Product>> UpdateProduct(HttpServletRequest request,
+            @RequestBody Product payload) {
+        Product product = productService.updateProduct(payload);
+        Map<String, Product> map = new HashMap<>();
         map.put("data", product);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }

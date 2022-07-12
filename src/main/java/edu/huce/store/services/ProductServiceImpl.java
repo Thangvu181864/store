@@ -38,4 +38,10 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.deleteById(id);
     }
 
+    @Override
+    public Product updateProduct(Product product) throws EtResourceNotFoundException {
+        Integer productId = productRepository.update(product);
+        return productRepository.findById(productId);
+    }
+
 }

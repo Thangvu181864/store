@@ -71,12 +71,27 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public Product deleteById(Integer id) throws EtResourceNotFoundException {
         try {
-            String SQL_DELETE_BY_ID = "DELETE FROM Products WHERE id = " + id;
+            String SQL_DELETE_BY_ID = "UPDATE Products SET destroy = true Products WHERE id = " + id;
             List<Product> product = jdbcTemplate.query(SQL_DELETE_BY_ID,
                     BeanPropertyRowMapper.newInstance(Product.class));
             return product.get(0);
         } catch (Exception e) {
             throw new EtResourceNotFoundException("Product not found");
+        }
+    }
+
+    @Override
+    public Integer update(Product product) throws EtResourceNotFoundException {
+        try {
+            String SQL_UPDATE = "UPDATE Accounts SET  name = ?, priceBuy = ?, priceSell = ?, vendorId = ?, quantity = ?, image = ?, note = ? WHERE id = ?";
+            jdbcTemplate.update(
+                    SQL_UPDATE,
+                    new Object[] { product.getName(), product.getPriceBuy(), product.getPriceSell(),
+                            product.getVendorId(), product.getQuantity(), product.getImage(), product.getNote(),
+                            product.getId() });
+            return product.getId();
+        } catch (Exception e) {
+            throw new EtResourceNotFoundException("Update failed: " + e.getMessage());
         }
     }
 

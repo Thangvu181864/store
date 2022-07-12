@@ -18,4 +18,5 @@ public class Product {
     private Integer quantity;
     private String image;
     private String note;
+    private Integer destroy;
 }

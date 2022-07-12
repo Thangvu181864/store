@@ -16,4 +16,6 @@ public interface ProductService {
     Product addProduct(Product product)
             throws EtAuthException;
 
+    Product updateProduct(Product product)
+            throws EtResourceNotFoundException;
 }

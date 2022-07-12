@@ -14,5 +14,7 @@ public interface ProductRepository {
     Product deleteById(Integer id) throws EtResourceNotFoundException;
 
     Integer create(Product product) throws EtAuthException;
+    
+    Integer update(Product product) throws EtResourceNotFoundException;
 
 }
