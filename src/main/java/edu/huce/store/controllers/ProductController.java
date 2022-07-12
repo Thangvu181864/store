@@ -54,10 +54,10 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Product>> DeleteProductById(@PathVariable("id") Integer id) {
-        Product product = productService.deleteProductById(id);
-        Map<String, Product> map = new HashMap<String, Product>();
-        map.put("data", product);
+    public ResponseEntity<Map<String, String>> DeleteProductById(@PathVariable("id") Integer id) {
+        Integer productId = productService.deleteProductById(id);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("data", "Delete productId: " + productId + " successful");
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 

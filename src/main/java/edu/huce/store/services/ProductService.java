@@ -11,7 +11,7 @@ public interface ProductService {
 
     Product fetchProductById(Integer id) throws EtResourceNotFoundException;
 
-    Product deleteProductById(Integer id) throws EtResourceNotFoundException;
+    Integer deleteProductById(Integer id) throws EtResourceNotFoundException;
 
     Product addProduct(Product product)
             throws EtAuthException;

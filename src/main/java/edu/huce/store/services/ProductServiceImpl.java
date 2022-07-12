@@ -34,9 +34,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product deleteProductById(Integer id) throws EtResourceNotFoundException {
+    public Integer deleteProductById(Integer id) throws EtResourceNotFoundException {
         Integer productId = productRepository.deleteById(id);
-        return productRepository.findById(productId);
+        return productId;
     }
 
     @Override
