@@ -71,9 +71,9 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public Integer deleteById(Integer id) throws EtResourceNotFoundException {
         try {
-            String SQL_DELETE_BY_ID = "UPDATE Products SET destroy = 1 WHERE id = " + id;
-             jdbcTemplate.query(SQL_DELETE_BY_ID,
-                    BeanPropertyRowMapper.newInstance(Product.class));
+            String SQL_DELETE_BY_ID = "UPDATE Products SET destroy = 1 WHERE id = ?";
+             jdbcTemplate.update(SQL_DELETE_BY_ID,
+             new Object[] {id});
             return id;
         } catch (Exception e) {
             throw new EtResourceNotFoundException("Product not found");
