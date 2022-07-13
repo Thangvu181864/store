@@ -83,7 +83,7 @@ CREATE TABLE Invoices
 (
     id INT IDENTITY PRIMARY KEY NOT NULL,
     employeeId INT NOT NULL FOREIGN KEY (employeeId) REFERENCES Employees(id),
-    typeInvoice CHAR(20) NOT NULL CHECK(typeInvoice IN('EXPORT','IMPORT')),
+    typeInvoice CHAR(6) NOT NULL CHECK(typeInvoice IN('EXPORT','IMPORT')),
     createAt DATE DEFAULT GETDATE(),
     total MONEY DEFAULT 0,
     note NVARCHAR(100),
@@ -295,10 +295,6 @@ VALUES( 3, 3,
 
 
 SELECT *
-FROM Accounts
-
-
-SELECT *
 FROM Products
 
 SELECT *
@@ -307,3 +303,10 @@ FROM Invoices
 SELECT *
 FROM DetailInvoices
 
+DROP TABLE DetailInvoices
+DROP TABLE Invoices
+DROP TABLE Products
+DROP TABLE Vendors
+DROP TABLE Employees
+DROP TABLE Accounts
+DROP TABLE Roles

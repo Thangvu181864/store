@@ -61,9 +61,10 @@ public class AccountController {
 
     private Map<String, String> generateJWTToken(Account account) {
         long timestamp = System.currentTimeMillis();
+        Date expiration = new Date(timestamp + Constants.TOKEN_VALIDITY);
         String token = Jwts.builder().signWith(SignatureAlgorithm.HS256, Constants.API_SECRET_KEY)
                 .setIssuedAt(new Date(timestamp))
-                .setExpiration(new Date(timestamp + Constants.TOKEN_VALIDITY))
+                .setExpiration(expiration)
                 .claim("id", account.getId())
                 .claim("username", account.getUsername())
                 .claim("roleId", account.getRoleId())
@@ -73,7 +74,7 @@ public class AccountController {
         map.put("id", account.getId().toString());
         map.put("username", account.getUsername());
         map.put("roleId", account.getRoleId().toString());
-        map.put("roleId", account.getRoleId().toString());
+        map.put("expiration", String.valueOf(expiration.getTime()));
         return map;
     }
 }
