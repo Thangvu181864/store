@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -55,6 +56,18 @@ public class AccountController {
         }
         Map<String, Account> map = new HashMap<>();
         Account account = accountService.updateAccount(payload);
+        map.put("data", account);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+    @GetMapping("/accounts/{id}")
+    public ResponseEntity<Map<String, Account>> findAccountById(HttpServletRequest request,
+            @PathVariable("id") Integer id) {
+        if (id != (Integer) request.getAttribute("id")) {
+            throw new EtAuthException("Unauthorized");
+        }
+        Map<String, Account> map = new HashMap<>();
+        Account account = accountService.findAccount(id);
         map.put("data", account);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }

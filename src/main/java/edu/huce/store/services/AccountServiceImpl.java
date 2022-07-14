@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.huce.store.exceptions.EtAuthException;
+import edu.huce.store.exceptions.EtBadRequestException;
 import edu.huce.store.models.Account;
 import edu.huce.store.repositories.AccountRepository;
 
@@ -42,6 +43,11 @@ public class AccountServiceImpl implements AccountService {
             account.setUsername(account.getUsername().toLowerCase());
         Integer accountId = accountRepository.update(account);
         return accountRepository.findById(accountId);
+    }
+
+    @Override
+    public Account findAccount(Integer id) throws EtBadRequestException {
+        return accountRepository.findById(id);
     }
 
 }
