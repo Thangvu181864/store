@@ -47,13 +47,10 @@ public class AccountController {
     }
 
     @PutMapping("/accounts/{id}")
-    public ResponseEntity<Map<String, Account>> UpdateAccount(HttpServletRequest request,
+    public ResponseEntity<Map<String, Account>> UpdateAccount(
             @PathVariable("id") Integer id,
             @RequestBody Account payload) {
         payload.setId((Integer) id);
-        if (payload.getId() != (Integer) request.getAttribute("id")) {
-            throw new EtAuthException("Unauthorized");
-        }
         Map<String, Account> map = new HashMap<>();
         Account account = accountService.updateAccount(payload);
         map.put("data", account);
@@ -61,11 +58,8 @@ public class AccountController {
     }
 
     @GetMapping("/accounts/{id}")
-    public ResponseEntity<Map<String, Account>> findAccountById(HttpServletRequest request,
+    public ResponseEntity<Map<String, Account>> findAccountById(
             @PathVariable("id") Integer id) {
-        if (id != (Integer) request.getAttribute("id")) {
-            throw new EtAuthException("Unauthorized");
-        }
         Map<String, Account> map = new HashMap<>();
         Account account = accountService.findAccount(id);
         map.put("data", account);
