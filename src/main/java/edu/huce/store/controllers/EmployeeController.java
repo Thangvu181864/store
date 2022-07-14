@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +25,8 @@ public class EmployeeController {
     EmployeeService employeeService;
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, Employee>> RegisterEmployee(HttpServletRequest request,
+    public ResponseEntity<Map<String, Employee>> RegisterEmployee(
             @RequestBody Employee payload) {
-        payload.setAccountId((Integer) request.getAttribute("id"));
         Employee employee = employeeService.registerEmployee(payload);
         Map<String, Employee> map = new HashMap<>();
         map.put("data", employee);

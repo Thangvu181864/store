@@ -293,6 +293,11 @@ VALUES( 3, 3,
         FROM Products
         WHERE id = 3) * 20, N'Hoa don 03')
 
+SELECT *
+FROM Accounts
+
+SELECT *
+FROM Employees
 
 SELECT *
 FROM Products
