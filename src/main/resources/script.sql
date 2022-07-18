@@ -70,6 +70,8 @@ CREATE TABLE Products
     "name" NVARCHAR(50) NOT NULL,
     priceBuy MONEY NOT NULL,
     priceSell MONEY NOT NULL,
+    dateManufacture DATE NOT NULL,
+    dateExpiration DATE NOT NULL,
     vendorId INT NOT NULL FOREIGN KEY (vendorId) REFERENCES Vendors(id),
     quantity INT NOT NULL DEFAULT 0,
     "image" VARCHAR(100) NOT NULL,
@@ -143,38 +145,6 @@ BEGIN
     END
 END
 
-
-GO
-
-CREATE TRIGGER tg_DetailInvoices_Update
-ON DetailInvoices
-FOR UPDATE
-AS 
-BEGIN
-    IF (SELECT (Products.quantity - inserted.quantity + deleted.quantity) AS quantity
-    FROM (Products INNER JOIN inserted ON Products.id = inserted.productId) INNER JOIN deleted ON Products.id = deleted.productId) < 0
-    BEGIN
-        RAISERROR  ('Quantity is not enough',12,1)
-        ROLLBACK TRAN
-    END
-    ELSE
-    BEGIN
-        UPDATE Products SET Products.quantity = Products.quantity - inserted.quantity + deleted.quantity FROM (Products INNER JOIN inserted ON Products.id = inserted.productId) INNER JOIN deleted ON Products.id = deleted.productId
-        UPDATE Invoices SET Invoices.total = Invoices.total + inserted.total - deleted.total FROM (Invoices INNER JOIN inserted ON Invoices.id = inserted.invoiceId) INNER JOIN deleted ON Invoices.id = deleted.invoiceId
-    END
-END
-
-GO
-
-CREATE TRIGGER tg_DetailInvoices_Delete
-ON DetailInvoices
-FOR DELETE
-AS 
-BEGIN
-    UPDATE Products SET Products.quantity = Products.quantity + deleted.quantity FROM Products INNER JOIN deleted ON Products.id = deleted.productId
-    UPDATE Invoices SET Invoices.total = Invoices.total - deleted.total FROM Invoices INNER JOIN deleted ON Invoices.id = deleted.invoiceId
-END
-
 GO
 
 
@@ -210,17 +180,16 @@ INSERT Vendors
 VALUES(N'CÔNG TY TNHH MTV', N'Đà Nẵng', 'mtv@gmail.com', '0123498765')
 
 INSERT Products
-    ("name" ,priceBuy,priceSell,vendorId ,quantity ,"image")
-VALUES(N'Bánh Mì', 10000, 15000, 1, 50, 'https://cdn.tgdd.vn/2020/09/CookProduct/1260-1200x676-52.jpg')
+    ("name" ,priceBuy,priceSell, dateManufacture, dateExpiration,vendorId ,quantity ,"image")
+VALUES(N'Bánh Mì', 10000, 15000,'01/01/2001','01/01/2002', 1, 50, 'https://cdn.tgdd.vn/2020/09/CookProduct/1260-1200x676-52.jpg')
 
 INSERT Products
-    ("name" ,priceBuy,priceSell,vendorId ,quantity ,"image")
-VALUES(N'Nước lọc', 65000, 66000, 2, 40, 'https://giaonuoc.vn/wp-content/uploads/2018/03/nuoc-lavie-19-lit-2.jpg')
+    ("name" ,priceBuy,priceSell, dateManufacture, dateExpiration,vendorId ,quantity ,"image")
+VALUES(N'Nước lọc', 65000, 66000,'01/01/2004','01/01/2005', 2, 40, 'https://giaonuoc.vn/wp-content/uploads/2018/03/nuoc-lavie-19-lit-2.jpg')
 
 INSERT Products
-    ("name" ,priceBuy,priceSell,vendorId ,quantity ,"image")
-VALUES(N'Bánh quy', 20000, 22000, 1, 60, 'https://minhcaumart.vn/media/com_eshop/products/7622210607300.jpg')
-
+    ("name" ,priceBuy,priceSell, dateManufacture, dateExpiration,vendorId ,quantity ,"image")
+VALUES(N'Bánh quy', 20000, 22000,'01/01/2007','01/01/2008', 1, 60, 'https://minhcaumart.vn/media/com_eshop/products/7622210607300.jpg')
 
 INSERT Invoices
     (employeeId ,typeInvoice ,note )
@@ -300,6 +269,9 @@ SELECT *
 FROM Employees
 
 SELECT *
+FROM Vendors
+
+SELECT *
 FROM Products
 
 SELECT *
@@ -308,10 +280,3 @@ FROM Invoices
 SELECT *
 FROM DetailInvoices
 
-DROP TABLE DetailInvoices
-DROP TABLE Invoices
-DROP TABLE Products
-DROP TABLE Vendors
-DROP TABLE Employees
-DROP TABLE Accounts
-DROP TABLE Roles

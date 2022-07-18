@@ -49,17 +49,19 @@ public class ProductRepositoryImpl implements ProductRepository {
     public Integer create(Product product)
             throws EtAuthException {
         try {
-            String SQL_CREATE = "INSERT Products( name, priceBuy, priceSell, vendorId, quantity, image, note) VALUES( ?, ?, ?, ?, ?, ?, ?)";
+            String SQL_CREATE = "INSERT Products( name, priceBuy, priceSell, dateManufacture, dateExpiration, vendorId, quantity, image, note) VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(SQL_CREATE, Statement.RETURN_GENERATED_KEYS);
                 ps.setString(1, product.getName());
                 ps.setInt(2, product.getPriceBuy());
                 ps.setInt(3, product.getPriceSell());
-                ps.setInt(4, product.getVendorId());
-                ps.setInt(5, product.getQuantity());
-                ps.setString(6, product.getImage());
-                ps.setString(7, product.getNote());
+                ps.setString(4, product.getDateManufacture());
+                ps.setString(5, product.getDateExpiration());
+                ps.setInt(6, product.getVendorId());
+                ps.setInt(7, product.getQuantity());
+                ps.setString(8, product.getImage());
+                ps.setString(9, product.getNote());
                 return ps;
             }, keyHolder);
             return Integer.parseInt(keyHolder.getKeys().get("GENERATED_KEYS").toString());
@@ -72,8 +74,8 @@ public class ProductRepositoryImpl implements ProductRepository {
     public Integer deleteById(Integer id) throws EtResourceNotFoundException {
         try {
             String SQL_DELETE_BY_ID = "UPDATE Products SET destroy = 1 WHERE id = ?";
-             jdbcTemplate.update(SQL_DELETE_BY_ID,
-             new Object[] {id});
+            jdbcTemplate.update(SQL_DELETE_BY_ID,
+                    new Object[] { id });
             return id;
         } catch (Exception e) {
             throw new EtResourceNotFoundException("Product not found");
@@ -83,10 +85,11 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public Integer update(Product product) throws EtResourceNotFoundException {
         try {
-            String SQL_UPDATE = "UPDATE Products SET  name = ?, priceBuy = ?, priceSell = ?, vendorId = ?, quantity = ?, image = ?, note = ? WHERE id = ?";
+            String SQL_UPDATE = "UPDATE Products SET  name = ?, priceBuy = ?, priceSell = ?, dateManufacture = ?, dateExpiration = ?, vendorId = ?, quantity = ?, image = ?, note = ? WHERE id = ?";
             jdbcTemplate.update(
                     SQL_UPDATE,
                     new Object[] { product.getName(), product.getPriceBuy(), product.getPriceSell(),
+                            product.getDateManufacture(), product.getDateExpiration(),
                             product.getVendorId(), product.getQuantity(), product.getImage(), product.getNote(),
                             product.getId() });
             return product.getId();
