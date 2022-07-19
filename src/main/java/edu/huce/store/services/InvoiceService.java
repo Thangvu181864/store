@@ -10,6 +10,8 @@ public interface InvoiceService {
     
     List<Invoice> fetchAllInvoices();
 
+    List<Invoice> fetchInvoiceByTypeInvoice(String typeInvoice);
+
     Invoice fetchInvoiceById(Integer id) throws EtResourceNotFoundException;
 
     Invoice addInvoice(Invoice invoice, List<DetailInvoice> detailInvoices);

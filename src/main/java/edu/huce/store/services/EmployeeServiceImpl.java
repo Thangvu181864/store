@@ -33,4 +33,16 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeRepository.findAll();
     }
 
+    @Override
+    public Employee updateEmployeeById(Integer id, Employee employee) throws EtResourceNotFoundException {
+        Integer employeeId = employeeRepository.update( id,  employee);
+        return employeeRepository.findById(employeeId);
+    }
+
+    @Override
+    public Integer deleteEmployeeById(Integer id) throws EtResourceNotFoundException {
+        Integer employeeId = employeeRepository.deleteById(id);
+        return employeeId;
+    }
+
 }

@@ -25,12 +25,12 @@ public class InvoiceRepositoryImpl implements InvoiceRepository {
     @Override
     public List<Invoice> findAll() throws EtResourceNotFoundException {
         try {
-            String SQL_FIND_ALL = "SELECT * FROM Invoices";
+            String SQL_FIND_ALL = "SELECT * FROM Invoices WHERE destroy = 0";
             List<Invoice> invoices = jdbcTemplate.query(SQL_FIND_ALL,
                     BeanPropertyRowMapper.newInstance(Invoice.class));
 
             for (int i = 0; i < invoices.size(); i++) {
-                String SQL_FIND_DETAIL_BY_ID = "SELECT * FROM DetailInvoices WHERE invoiceId = "
+                String SQL_FIND_DETAIL_BY_ID = "SELECT * FROM DetailInvoices WHERE destroy = 0 AND invoiceId = "
                         + invoices.get(i).getId();
                 List<DetailInvoice> detailInvoices = jdbcTemplate.query(SQL_FIND_DETAIL_BY_ID,
                         BeanPropertyRowMapper.newInstance(DetailInvoice.class));
@@ -45,8 +45,8 @@ public class InvoiceRepositoryImpl implements InvoiceRepository {
     @Override
     public Invoice findById(Integer id) throws EtResourceNotFoundException {
         try {
-            String SQL_FIND_INVOICE_BY_ID = "SELECT * FROM Invoices WHERE id = " + id;
-            String SQL_FIND_DETAIL_BY_ID = "SELECT * FROM DetailInvoices WHERE invoiceId = " + id;
+            String SQL_FIND_INVOICE_BY_ID = "SELECT * FROM Invoices WHERE destroy = 0 AND id = " + id;
+            String SQL_FIND_DETAIL_BY_ID = "SELECT * FROM DetailInvoices WHERE destroy = 0 AND invoiceId = " + id;
             List<Invoice> invoices = jdbcTemplate.query(SQL_FIND_INVOICE_BY_ID,
                     BeanPropertyRowMapper.newInstance(Invoice.class));
             List<DetailInvoice> detailInvoices = jdbcTemplate.query(SQL_FIND_DETAIL_BY_ID,
@@ -74,6 +74,26 @@ public class InvoiceRepositoryImpl implements InvoiceRepository {
         } catch (Exception e) {
             System.err.println(e.getMessage());
             throw new EtBadRequestException("Invalid details. Failed to create invoice" + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<Invoice> findByTypeInvoice(String typeInvoice) throws EtResourceNotFoundException {
+        try {
+            String SQL_FIND_ALL = "SELECT * FROM Invoices WHERE destroy = 0 AND typeInvoice = '" + typeInvoice + "'";
+            List<Invoice> invoices = jdbcTemplate.query(SQL_FIND_ALL,
+                    BeanPropertyRowMapper.newInstance(Invoice.class));
+
+            for (int i = 0; i < invoices.size(); i++) {
+                String SQL_FIND_DETAIL_BY_ID = "SELECT * FROM DetailInvoices WHERE destroy = 0 AND invoiceId = "
+                        + invoices.get(i).getId();
+                List<DetailInvoice> detailInvoices = jdbcTemplate.query(SQL_FIND_DETAIL_BY_ID,
+                        BeanPropertyRowMapper.newInstance(DetailInvoice.class));
+                invoices.get(i).setDetailInvoices(detailInvoices);
+            }
+            return invoices;
+        } catch (Exception e) {
+            throw new EtResourceNotFoundException("Invoices not found" + e.getMessage());
         }
     }
 

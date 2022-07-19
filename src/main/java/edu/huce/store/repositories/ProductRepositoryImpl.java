@@ -83,7 +83,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public Integer update(Product product) throws EtResourceNotFoundException {
+    public Integer update(Integer id, Product product) throws EtResourceNotFoundException {
         try {
             String SQL_UPDATE = "UPDATE Products SET  name = ?, priceBuy = ?, priceSell = ?, dateManufacture = ?, dateExpiration = ?, vendorId = ?, quantity = ?, image = ?, note = ? WHERE id = ?";
             jdbcTemplate.update(
@@ -91,8 +91,8 @@ public class ProductRepositoryImpl implements ProductRepository {
                     new Object[] { product.getName(), product.getPriceBuy(), product.getPriceSell(),
                             product.getDateManufacture(), product.getDateExpiration(),
                             product.getVendorId(), product.getQuantity(), product.getImage(), product.getNote(),
-                            product.getId() });
-            return product.getId();
+                            id });
+            return id;
         } catch (Exception e) {
             throw new EtResourceNotFoundException("Update failed: " + e.getMessage());
         }

@@ -63,8 +63,9 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Product>> UpdateProduct(HttpServletRequest request,
+            @PathVariable("id") Integer id,
             @RequestBody Product payload) {
-        Product product = productService.updateProduct(payload);
+        Product product = productService.updateProduct(id, payload);
         Map<String, Product> map = new HashMap<>();
         map.put("data", product);
         return new ResponseEntity<>(map, HttpStatus.OK);

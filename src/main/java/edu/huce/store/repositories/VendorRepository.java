@@ -11,5 +11,11 @@ public interface VendorRepository {
 
     Integer create(Vendor vendor) throws EtAuthException;
 
-    Vendor findById(Integer id);
+    Vendor findById(Integer id) throws EtResourceNotFoundException;
+
+    List<Vendor> findByName(String param) throws EtResourceNotFoundException;
+
+    Integer deleteById(Integer id) throws EtResourceNotFoundException;
+
+    Integer update(Integer id, Vendor vendor) throws EtResourceNotFoundException;
 }

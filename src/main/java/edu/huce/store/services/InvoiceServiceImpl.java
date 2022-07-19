@@ -43,4 +43,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoiceRepository.findById(invoicesId);
     }
 
+    @Override
+    public List<Invoice> fetchInvoiceByTypeInvoice(String typeInvoice) {
+        return invoiceRepository.findByTypeInvoice(typeInvoice);
+    }
+
 }

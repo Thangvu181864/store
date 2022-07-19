@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.huce.store.models.DetailInvoice;
@@ -43,8 +44,17 @@ public class InvoiceController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
+    @GetMapping("/")
+    public ResponseEntity<Map<String, List<Invoice>>> GetInvoiceByTypeInvoice(@RequestParam String typeInvoice) {
+        List<Invoice> invoices = invoiceService.fetchInvoiceByTypeInvoice(typeInvoice);
+        Map<String, List<Invoice>> map = new HashMap<String, List<Invoice>>();
+        map.put("data", invoices);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
     @PostMapping("/create")
-    public ResponseEntity<Map<String, Invoice>> CreateInvoice(HttpServletRequest request,@RequestBody Invoice payload) {
+    public ResponseEntity<Map<String, Invoice>> CreateInvoice(HttpServletRequest request,
+            @RequestBody Invoice payload) {
         Invoice invoice = new Invoice();
         invoice.setEmployeeId((Integer) request.getAttribute("id"));
         invoice.setTypeInvoice(payload.getTypeInvoice());

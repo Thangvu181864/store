@@ -9,6 +9,8 @@ import edu.huce.store.models.Invoice;
 public interface InvoiceRepository {
     List<Invoice> findAll() throws EtResourceNotFoundException;
 
+    List<Invoice> findByTypeInvoice(String typeInvoice) throws EtResourceNotFoundException;
+
     Invoice findById(Integer id) throws EtResourceNotFoundException;
 
     Integer create(Invoice invoice) throws EtBadRequestException;

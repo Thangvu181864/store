@@ -7,9 +7,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,11 +35,28 @@ public class EmployeeController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Map<String, Employee>> GetEmployeeById(@PathVariable("id") Integer id) {
         Employee employee = employeeService.fetchEmployeeById(id);
         Map<String, Employee> map = new HashMap<String, Employee>();
         map.put("data", employee);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Map<String, Employee>> UpdateEmployeeById(@PathVariable("id") Integer id,
+            @RequestBody Employee payload) {
+        Employee employee = employeeService.updateEmployeeById(id, payload);
+        Map<String, Employee> map = new HashMap<String, Employee>();
+        map.put("data", employee);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, String>> DeleteEmployeeById(@PathVariable("id") Integer id) {
+        Integer employeeId = employeeService.deleteEmployeeById(id);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("data", "Delete employeeId: " + employeeId + " successful");
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 

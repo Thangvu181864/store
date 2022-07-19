@@ -35,6 +35,7 @@ CREATE TABLE Accounts
     "password" NVARCHAR(200) NOT NULL,
     roleId INT NOT NULL FOREIGN KEY (roleId) REFERENCES Roles(id),
     note NVARCHAR(100),
+    destroy BIT NOT NULL DEFAULT 0,
 )
 
 GO
@@ -47,7 +48,8 @@ CREATE TABLE Employees
     gender INT NOT NULL,
     "address" NVARCHAR(50) NOT NULL,
     phone VARCHAR(10) NOT NULL UNIQUE,
-    accountId INT NOT NULL FOREIGN KEY (accountId) REFERENCES Accounts(id)
+    accountId INT NOT NULL FOREIGN KEY (accountId) REFERENCES Accounts(id),
+    destroy BIT NOT NULL DEFAULT 0,
 )
 
 GO
@@ -59,7 +61,8 @@ CREATE TABLE Vendors
     "address" NVARCHAR(50) NOT NULL,
     email NVARCHAR(50) UNIQUE,
     phone VARCHAR(10) UNIQUE,
-    note NVARCHAR(100)
+    note NVARCHAR(100),
+    destroy BIT NOT NULL DEFAULT 0,
 )
 
 GO
@@ -89,6 +92,7 @@ CREATE TABLE Invoices
     createAt DATE DEFAULT GETDATE(),
     total MONEY DEFAULT 0,
     note NVARCHAR(100),
+    destroy BIT NOT NULL DEFAULT 0,
 )
 
 GO
@@ -102,19 +106,39 @@ CREATE TABLE DetailInvoices
     quantity INT NOT NULL DEFAULT 0,
     total MONEY NOT NULL DEFAULT 0,
     note NVARCHAR(100),
+    destroy BIT NOT NULL DEFAULT 0,
 )
 
 GO
 
-CREATE TRIGGER tg_Employee_Delete
+CREATE TRIGGER tg_Employee_Update
 ON Employees
+FOR Update
+AS
+BEGIN
+    IF UPDATE(destroy)
+    BEGIN
+        DECLARE @accountId INT
+        SELECT @accountId = accountId
+        FROM deleted
+        UPDATE Accounts SET destroy = 1 WHERE id = @accountId
+    END
+END
+
+GO
+
+CREATE TRIGGER tg_Invoice_Delete
+ON Invoices
 FOR Delete
 AS
 BEGIN
-    DECLARE @accountId INT
-    SELECT @accountId = accountId
-    FROM deleted
-    DELETE FROM Accounts WHERE id = @accountId
+    IF UPDATE(destroy)
+    BEGIN
+        DECLARE @invoiceId INT
+        SELECT @invoiceId = id
+        FROM deleted
+        UPDATE DetailInvoices SET destroy = 1 WHERE id = @invoiceId
+    END
 END
 
 GO
@@ -181,15 +205,15 @@ VALUES(N'CÔNG TY TNHH MTV', N'Đà Nẵng', 'mtv@gmail.com', '0123498765')
 
 INSERT Products
     ("name" ,priceBuy,priceSell, dateManufacture, dateExpiration,vendorId ,quantity ,"image")
-VALUES(N'Bánh Mì', 10000, 15000,'01/01/2001','01/01/2002', 1, 50, 'https://cdn.tgdd.vn/2020/09/CookProduct/1260-1200x676-52.jpg')
+VALUES(N'Bánh Mì', 10000, 15000, '01/01/2001', '01/01/2002', 1, 50, 'https://cdn.tgdd.vn/2020/09/CookProduct/1260-1200x676-52.jpg')
 
 INSERT Products
     ("name" ,priceBuy,priceSell, dateManufacture, dateExpiration,vendorId ,quantity ,"image")
-VALUES(N'Nước lọc', 65000, 66000,'01/01/2004','01/01/2005', 2, 40, 'https://giaonuoc.vn/wp-content/uploads/2018/03/nuoc-lavie-19-lit-2.jpg')
+VALUES(N'Nước lọc', 65000, 66000, '01/01/2004', '01/01/2005', 2, 40, 'https://giaonuoc.vn/wp-content/uploads/2018/03/nuoc-lavie-19-lit-2.jpg')
 
 INSERT Products
     ("name" ,priceBuy,priceSell, dateManufacture, dateExpiration,vendorId ,quantity ,"image")
-VALUES(N'Bánh quy', 20000, 22000,'01/01/2007','01/01/2008', 1, 60, 'https://minhcaumart.vn/media/com_eshop/products/7622210607300.jpg')
+VALUES(N'Bánh quy', 20000, 22000, '01/01/2007', '01/01/2008', 1, 60, 'https://minhcaumart.vn/media/com_eshop/products/7622210607300.jpg')
 
 INSERT Invoices
     (employeeId ,typeInvoice ,note )

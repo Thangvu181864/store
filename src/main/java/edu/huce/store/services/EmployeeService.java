@@ -10,6 +10,10 @@ public interface EmployeeService {
     Employee registerEmployee(Employee employee) throws EtAuthException;
 
     Employee fetchEmployeeById(Integer id) throws EtResourceNotFoundException;
+    
+    Employee updateEmployeeById(Integer id , Employee employee) throws EtResourceNotFoundException;
+    
+    Integer deleteEmployeeById(Integer id) throws EtResourceNotFoundException;
 
     List<Employee> fetchAllEmployees();
 }

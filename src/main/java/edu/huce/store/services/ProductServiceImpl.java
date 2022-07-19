@@ -40,8 +40,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateProduct(Product product) throws EtResourceNotFoundException {
-        Integer productId = productRepository.update(product);
+    public Product updateProduct(Integer id, Product product) throws EtResourceNotFoundException {
+        Integer productId = productRepository.update(id, product);
         return productRepository.findById(productId);
     }
 

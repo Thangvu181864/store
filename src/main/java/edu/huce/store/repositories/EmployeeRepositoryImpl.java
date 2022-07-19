@@ -44,8 +44,8 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
     }
 
     @Override
-    public Employee findById(Integer id) {
-        String SQL_FIND_BY_ID = "SELECT id, fullname, birthday, gender, address, phone, accountId FROM Employees WHERE id = '"
+    public Employee findById(Integer id) throws EtResourceNotFoundException{
+        String SQL_FIND_BY_ID = "SELECT id, fullname, birthday, gender, address, phone, accountId FROM Employees WHERE destroy = 0 AND id = '"
                 + id + "'";
         List<Employee> employee = jdbcTemplate.query(SQL_FIND_BY_ID, BeanPropertyRowMapper.newInstance(Employee.class));
         return employee.get(0);
@@ -53,8 +53,33 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 
     @Override
     public List<Employee> findAll() throws EtResourceNotFoundException {
-        String SQL_FIND_ALL = "SELECT id, fullname, birthday, gender, address, phone, accountId FROM Employees";
+        String SQL_FIND_ALL = "SELECT id, fullname, birthday, gender, address, phone, accountId FROM Employees WHERE destroy = 0";
         List<Employee> employee = jdbcTemplate.query(SQL_FIND_ALL, BeanPropertyRowMapper.newInstance(Employee.class));
         return employee;
+    }
+
+    @Override
+    public Integer update(Integer id, Employee employee) throws EtResourceNotFoundException {
+        try {
+            String SQL_UPDATE = "UPDATE Employees SET  fullname = ?, birthday = ?, gender = ?, address = ?, phone = ? WHERE destroy = 0 AND  id = ?";
+            jdbcTemplate.update(
+                    SQL_UPDATE,
+                    new Object[] { employee.getFullname(),employee.getBirthday(),employee.getGender(),employee.getAddress(),employee.getPhone(),id });
+            return id;
+        } catch (Exception e) {
+            throw new EtResourceNotFoundException("Update failed: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public Integer deleteById(Integer id) throws EtResourceNotFoundException {
+        try {
+            String SQL_DELETE_BY_ID = "UPDATE Employees SET destroy = 1 WHERE id = ?";
+            jdbcTemplate.update(SQL_DELETE_BY_ID,
+                    new Object[] { id });
+            return id;
+        } catch (Exception e) {
+            throw new EtResourceNotFoundException("Employee not found");
+        }
     }
 }

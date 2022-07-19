@@ -47,7 +47,7 @@ public class AccountRepositoryImpl implements AccountRepository {
     @Override
     public Account findByUsernameAndPassword(Account account) throws EtBadRequestException {
         try {
-            String SQL_FIND_BY_USERNAME = "SELECT id, username, password, roleId, note FROM Accounts WHERE username = '"
+            String SQL_FIND_BY_USERNAME = "SELECT id, username, password, roleId, note FROM Accounts WHERE destroy = 0 AND username = '"
                     + account.getUsername() + "'";
             List<Account> result = jdbcTemplate.query(SQL_FIND_BY_USERNAME,
                     BeanPropertyRowMapper.newInstance(Account.class));
@@ -73,7 +73,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public Account findById(Integer id) {
-        String SQL_FIND_BY_ID = "SELECT id, username, roleId, note FROM Accounts WHERE id = '" + id + "'";
+        String SQL_FIND_BY_ID = "SELECT id, username, roleId, note FROM Accounts WHERE destroy = 0 AND id = '" + id + "'";
         List<Account> account = jdbcTemplate.query(SQL_FIND_BY_ID, BeanPropertyRowMapper.newInstance(Account.class));
         return account.get(0);
     }
@@ -83,7 +83,7 @@ public class AccountRepositoryImpl implements AccountRepository {
             throws EtBadRequestException {
         try {
             String hashedPassword = BCrypt.hashpw(account.getPassword(), BCrypt.gensalt(10));
-            String SQL_UPDATE = "UPDATE Accounts SET username = ?, password = ? ,roleId = ?, note = ? WHERE id = ?";
+            String SQL_UPDATE = "UPDATE Accounts SET username = ?, password = ? ,roleId = ?, note = ? WHERE destroy = 0 AND id = ?";
             jdbcTemplate.update(
                     SQL_UPDATE,
                     new Object[] { account.getUsername(), hashedPassword, account.getRoleId(), account.getNote(),
