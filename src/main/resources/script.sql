@@ -113,7 +113,7 @@ GO
 
 CREATE TRIGGER tg_Employee_Update
 ON Employees
-FOR Update
+FOR UPDATE
 AS
 BEGIN
     IF UPDATE(destroy)
@@ -127,9 +127,9 @@ END
 
 GO
 
-CREATE TRIGGER tg_Invoice_Delete
+CREATE TRIGGER tg_Invoice_Update
 ON Invoices
-FOR Delete
+FOR UPDATE
 AS
 BEGIN
     IF UPDATE(destroy)
