@@ -2,18 +2,16 @@ package edu.huce.store.services;
 
 import java.util.List;
 
-import edu.huce.store.exceptions.EtAuthException;
-import edu.huce.store.exceptions.EtResourceNotFoundException;
 import edu.huce.store.models.Employee;
 
 public interface EmployeeService {
-    Employee registerEmployee(Employee employee) throws EtAuthException;
+    Employee registerEmployee(Employee employee);
 
-    Employee fetchEmployeeById(Integer id) throws EtResourceNotFoundException;
-    
-    Employee updateEmployeeById(Integer id , Employee employee) throws EtResourceNotFoundException;
-    
-    Integer deleteEmployeeById(Integer id) throws EtResourceNotFoundException;
+    Employee fetchEmployeeById(Integer id);
+
+    Employee updateEmployeeById(Integer id, Employee employee);
+
+    Integer deleteEmployeeById(Integer id);
 
     List<Employee> fetchAllEmployees();
 }

@@ -11,7 +11,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import edu.huce.store.exceptions.EtAuthException;
+import edu.huce.store.exceptions.EtBadRequestException;
 import edu.huce.store.exceptions.EtResourceNotFoundException;
 import edu.huce.store.models.Product;
 
@@ -22,32 +22,36 @@ public class ProductRepositoryImpl implements ProductRepository {
     JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<Product> findAll() throws EtResourceNotFoundException {
+    public List<Product> findAll() {
         try {
             String SQL_FIND_ALL = "SELECT * FROM Products WHERE destroy = 0";
             List<Product> products = jdbcTemplate.query(SQL_FIND_ALL,
                     BeanPropertyRowMapper.newInstance(Product.class));
             return products;
         } catch (Exception e) {
-            throw new EtResourceNotFoundException("Products not found");
+            throw new EtBadRequestException(e.getMessage());
         }
     }
 
     @Override
-    public Product findById(Integer id) throws EtResourceNotFoundException {
+    public Product findById(Integer id) {
         try {
             String SQL_FIND_BY_ID = "SELECT * FROM Products WHERE destroy = 0 AND id = " + id;
             List<Product> product = jdbcTemplate.query(SQL_FIND_BY_ID,
                     BeanPropertyRowMapper.newInstance(Product.class));
-            return product.get(0);
+            if (product.size() == 0) {
+                throw new EtResourceNotFoundException("Not found");
+
+            } else {
+                return product.get(0);
+            }
         } catch (Exception e) {
-            throw new EtResourceNotFoundException("Product not found");
+            throw new EtBadRequestException(e.getMessage());
         }
     }
 
     @Override
-    public Integer create(Product product)
-            throws EtAuthException {
+    public Integer create(Product product) {
         try {
             String SQL_CREATE = "INSERT Products( name, priceBuy, priceSell, dateManufacture, dateExpiration, vendorId, quantity, image, note) VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -66,24 +70,24 @@ public class ProductRepositoryImpl implements ProductRepository {
             }, keyHolder);
             return Integer.parseInt(keyHolder.getKeys().get("GENERATED_KEYS").toString());
         } catch (Exception e) {
-            throw new EtAuthException("Invalid details. Failed to create account");
+            throw new EtBadRequestException("Invalid details. Failed to create account");
         }
     }
 
     @Override
-    public Integer deleteById(Integer id) throws EtResourceNotFoundException {
+    public Integer deleteById(Integer id) {
         try {
             String SQL_DELETE_BY_ID = "UPDATE Products SET destroy = 1 WHERE id = ?";
             jdbcTemplate.update(SQL_DELETE_BY_ID,
                     new Object[] { id });
             return id;
         } catch (Exception e) {
-            throw new EtResourceNotFoundException("Product not found");
+            throw new EtBadRequestException(e.getMessage());
         }
     }
 
     @Override
-    public Integer update(Integer id, Product product) throws EtResourceNotFoundException {
+    public Integer update(Integer id, Product product) {
         try {
             String SQL_UPDATE = "UPDATE Products SET  name = ?, priceBuy = ?, priceSell = ?, dateManufacture = ?, dateExpiration = ?, vendorId = ?, quantity = ?, image = ?, note = ? WHERE id = ?";
             jdbcTemplate.update(
@@ -94,7 +98,7 @@ public class ProductRepositoryImpl implements ProductRepository {
                             id });
             return id;
         } catch (Exception e) {
-            throw new EtResourceNotFoundException("Update failed: " + e.getMessage());
+            throw new EtBadRequestException("Update failed: " + e.getMessage());
         }
     }
 

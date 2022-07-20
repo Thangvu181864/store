@@ -2,20 +2,17 @@ package edu.huce.store.services;
 
 import java.util.List;
 
-import edu.huce.store.exceptions.EtAuthException;
-import edu.huce.store.exceptions.EtResourceNotFoundException;
+
 import edu.huce.store.models.Product;
 
 public interface ProductService {
         List<Product> fectchAllProducts();
 
-        Product fetchProductById(Integer id) throws EtResourceNotFoundException;
+        Product fetchProductById(Integer id);
 
-        Integer deleteProductById(Integer id) throws EtResourceNotFoundException;
+        Integer deleteProductById(Integer id);
 
-        Product addProduct(Product product)
-                        throws EtAuthException;
+        Product addProduct(Product product);
 
-        Product updateProduct(Integer id, Product product)
-                        throws EtResourceNotFoundException;
+        Product updateProduct(Integer id, Product product);
 }

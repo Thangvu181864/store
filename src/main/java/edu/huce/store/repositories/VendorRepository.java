@@ -2,20 +2,18 @@ package edu.huce.store.repositories;
 
 import java.util.List;
 
-import edu.huce.store.exceptions.EtAuthException;
-import edu.huce.store.exceptions.EtResourceNotFoundException;
 import edu.huce.store.models.Vendor;
 
 public interface VendorRepository {
-    List<Vendor> findAll() throws EtResourceNotFoundException;
+    List<Vendor> findAll();
 
-    Integer create(Vendor vendor) throws EtAuthException;
+    Integer create(Vendor vendor);
 
-    Vendor findById(Integer id) throws EtResourceNotFoundException;
+    Vendor findById(Integer id);
 
-    List<Vendor> findByName(String param) throws EtResourceNotFoundException;
+    List<Vendor> findByName(String param);
 
-    Integer deleteById(Integer id) throws EtResourceNotFoundException;
+    Integer deleteById(Integer id);
 
-    Integer update(Integer id, Vendor vendor) throws EtResourceNotFoundException;
+    Integer update(Integer id, Vendor vendor);
 }

@@ -1,11 +1,11 @@
-version: "3.9"
+version: '3.9'
 
 services:
   sqlserver:
     container_name: sqlserver
     image: mcr.microsoft.com/mssql/server:2019-latest
     user: root
-    hostname: localhost
+    hostname: sqlserver
     ports:
       - 1433:1433
     volumes:

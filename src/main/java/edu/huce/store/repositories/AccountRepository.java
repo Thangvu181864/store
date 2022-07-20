@@ -1,15 +1,13 @@
 package edu.huce.store.repositories;
 
-import edu.huce.store.exceptions.EtAuthException;
-import edu.huce.store.exceptions.EtBadRequestException;
 import edu.huce.store.models.Account;
 
 public interface AccountRepository {
-    Integer create(Account account) throws EtAuthException;
+    Integer create(Account account);
 
-    Integer update(Account account) throws EtBadRequestException;
+    Integer update(Account account);
 
-    Account findByUsernameAndPassword(Account account) throws EtBadRequestException;
+    Account findByUsernameAndPassword(Account account);
 
     Integer getCountByUsername(String username);
 

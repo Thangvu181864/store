@@ -11,7 +11,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import edu.huce.store.exceptions.EtAuthException;
+import edu.huce.store.exceptions.EtBadRequestException;
 import edu.huce.store.exceptions.EtResourceNotFoundException;
 import edu.huce.store.models.Vendor;
 
@@ -22,19 +22,19 @@ public class VendorRepositoryImpl implements VendorRepository {
     JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<Vendor> findAll() throws EtResourceNotFoundException {
+    public List<Vendor> findAll() {
         try {
             String SQL_FIND_ALL = "SELECT * FROM Vendors WHERE destroy = 0";
             List<Vendor> vendors = jdbcTemplate.query(SQL_FIND_ALL,
                     BeanPropertyRowMapper.newInstance(Vendor.class));
             return vendors;
         } catch (Exception e) {
-            throw new EtResourceNotFoundException("Products not found");
+            throw new EtBadRequestException(e.getMessage());
         }
     }
 
     @Override
-    public Integer create(Vendor vendor) throws EtAuthException {
+    public Integer create(Vendor vendor) {
         try {
             String SQL_CREATE = "INSERT Vendors(name, address, email, phone, note) VALUES( ?, ?, ?, ?, ?)";
             KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -49,21 +49,32 @@ public class VendorRepositoryImpl implements VendorRepository {
             }, keyHolder);
             return Integer.parseInt(keyHolder.getKeys().get("GENERATED_KEYS").toString());
         } catch (Exception e) {
-            throw new EtAuthException("Invalid details. Failed to create vendors");
+            throw new EtBadRequestException("Invalid details. Failed to create vendors : " + e.getMessage());
 
         }
     }
 
     @Override
     public Vendor findById(Integer id) {
-        String SQL_FIND_BY_ID = "SELECT id, name, address, email, phone, note FROM Vendors WHERE destroy = 0 AND id = '"
-                + id + "'";
-        List<Vendor> employee = jdbcTemplate.query(SQL_FIND_BY_ID, BeanPropertyRowMapper.newInstance(Vendor.class));
-        return employee.get(0);
+        try {
+            String SQL_FIND_BY_ID = "SELECT id, name, address, email, phone, note FROM Vendors WHERE destroy = 0 AND id = '"
+                    + id + "'";
+            List<Vendor> employee = jdbcTemplate.query(SQL_FIND_BY_ID, BeanPropertyRowMapper.newInstance(Vendor.class));
+            if (employee.size() == 0) {
+                throw new EtResourceNotFoundException("Not found");
+
+            } else {
+                return employee.get(0);
+            }
+        } catch (Exception e) {
+            throw new EtBadRequestException(e.getMessage());
+
+        }
+
     }
 
     @Override
-    public Integer update(Integer id, Vendor vendor) throws EtResourceNotFoundException {
+    public Integer update(Integer id, Vendor vendor) {
         try {
             String SQL_UPDATE = "UPDATE Vendors SET  name = ?, address = ?, email = ?, phone = ?, note = ? WHERE destroy = 0 AND  id = ?";
             jdbcTemplate.update(
@@ -72,30 +83,34 @@ public class VendorRepositoryImpl implements VendorRepository {
                             vendor.getNote(), id });
             return id;
         } catch (Exception e) {
-            throw new EtResourceNotFoundException("Update failed: " + e.getMessage());
+            throw new EtBadRequestException("Update failed : " + e.getMessage());
         }
     }
 
     @Override
-    public Integer deleteById(Integer id) throws EtResourceNotFoundException {
+    public Integer deleteById(Integer id) {
         try {
             String SQL_DELETE_BY_ID = "UPDATE Vendors SET destroy = 1 WHERE id = ?";
             jdbcTemplate.update(SQL_DELETE_BY_ID,
                     new Object[] { id });
             return id;
         } catch (Exception e) {
-            throw new EtResourceNotFoundException("Vendor not found");
+            throw new EtBadRequestException(e.getMessage());
         }
     }
 
     @Override
-    public List<Vendor> findByName(String param) throws EtResourceNotFoundException {
-        String SQL_FIND_BY_NAME = "SELECT id, name, address, email, phone, note FROM Vendors WHERE destroy = 0 AND name LIKE '%"
-                + param + "%'";
-        List<Vendor> vendors = jdbcTemplate.query(SQL_FIND_BY_NAME, BeanPropertyRowMapper.newInstance(Vendor.class));
-        return vendors;
-    }
+    public List<Vendor> findByName(String param) {
+        try {
+            String SQL_FIND_BY_NAME = "SELECT id, name, address, email, phone, note FROM Vendors WHERE destroy = 0 AND name LIKE '%"
+                    + param + "%'";
+            List<Vendor> vendors = jdbcTemplate.query(SQL_FIND_BY_NAME,
+                    BeanPropertyRowMapper.newInstance(Vendor.class));
+            return vendors;
+        } catch (Exception e) {
+            throw new EtBadRequestException(e.getMessage());
+        }
 
-    
+    }
 
 }

@@ -2,18 +2,16 @@ package edu.huce.store.services;
 
 import java.util.List;
 
-import edu.huce.store.exceptions.EtAuthException;
-import edu.huce.store.exceptions.EtResourceNotFoundException;
 import edu.huce.store.models.Vendor;
 
 public interface VendorService {
-    List<Vendor> fectchAllVendors() throws EtResourceNotFoundException;
+    List<Vendor> fectchAllVendors();
 
-    List<Vendor> fectchVendorByName(String param) throws EtResourceNotFoundException;
+    List<Vendor> fectchVendorByName(String param);
 
-    Vendor updateVendor(Integer id, Vendor vendor) throws EtResourceNotFoundException;
+    Vendor updateVendor(Integer id, Vendor vendor);
 
-    Integer deleteVendorById(Integer id) throws EtResourceNotFoundException;
+    Integer deleteVendorById(Integer id);
 
-    Vendor addVendor(Vendor vendor) throws EtAuthException;
+    Vendor addVendor(Vendor vendor);
 }

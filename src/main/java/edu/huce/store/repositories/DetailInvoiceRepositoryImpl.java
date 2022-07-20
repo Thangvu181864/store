@@ -21,31 +21,35 @@ public class DetailInvoiceRepositoryImpl implements DetailInvoiceRepository {
     JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<DetailInvoice> findAll() throws EtResourceNotFoundException {
+    public List<DetailInvoice> findAll() {
         try {
             String SQL_FIND_ALL = "SELECT * FROM DetailInvoices";
             List<DetailInvoice> detailInvoices = jdbcTemplate.query(SQL_FIND_ALL,
                     BeanPropertyRowMapper.newInstance(DetailInvoice.class));
             return detailInvoices;
         } catch (Exception e) {
-            throw new EtResourceNotFoundException("Invoices not found");
+            throw new EtBadRequestException(e.getMessage());
         }
     }
 
     @Override
-    public DetailInvoice findById(Integer id) throws EtResourceNotFoundException {
+    public DetailInvoice findById(Integer id) {
         try {
             String SQL_FIND_BY_ID = "SELECT * FROM DetailInvoices WHERE id = " + id;
             List<DetailInvoice> detailInvoices = jdbcTemplate.query(SQL_FIND_BY_ID,
                     BeanPropertyRowMapper.newInstance(DetailInvoice.class));
-            return detailInvoices.get(0);
+            if (detailInvoices.size() == 0) {
+                throw new EtResourceNotFoundException("Not found");
+            } else {
+                return detailInvoices.get(0);
+            }
         } catch (Exception e) {
-            throw new EtResourceNotFoundException("Invoice not found");
+            throw new EtBadRequestException(e.getMessage());
         }
     }
 
     @Override
-    public Integer create(DetailInvoice detailInvoice) throws EtBadRequestException {
+    public Integer create(DetailInvoice detailInvoice) {
         try {
             String SQL_CREATE = "INSERT DetailInvoices( invoiceId, productId, priceSell, quantity, total, note) VALUES(?, ?, ?, ?, ?, ?)";
             KeyHolder keyHolder = new GeneratedKeyHolder();

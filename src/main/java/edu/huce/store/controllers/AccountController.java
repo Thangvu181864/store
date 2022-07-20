@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.huce.store.Constants;
+import edu.huce.store.exceptions.EtAuthException;
 import edu.huce.store.models.Account;
 import edu.huce.store.services.AccountService;
 import io.jsonwebtoken.Jwts;
@@ -30,28 +33,37 @@ public class AccountController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> LoginAccount(@RequestBody Account payload) {
-
         Account account = accountService.validateAccount(payload);
         return new ResponseEntity<>(generateJWTToken(account), HttpStatus.OK);
     }
 
     @PostMapping("/accounts/register")
-    public ResponseEntity<Map<String, Account>> RegisterAccount(@RequestBody Account payload) {
-        Map<String, Account> map = new HashMap<>();
-        Account account = accountService.registerAccount(payload);
-        map.put("data", account);
-        return new ResponseEntity<>(map, HttpStatus.OK);
+    public ResponseEntity<Map<String, Account>> RegisterAccount(HttpServletRequest request,
+            @RequestBody Account payload) {
+        if ((Integer) request.getAttribute("roleId") == 2) {
+            Map<String, Account> map = new HashMap<>();
+            Account account = accountService.registerAccount(payload);
+            map.put("data", account);
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        } else {
+            throw new EtAuthException("Unauthorized");
+        }
     }
 
     @PutMapping("/accounts/{id}")
     public ResponseEntity<Map<String, Account>> UpdateAccount(
+            HttpServletRequest request,
             @PathVariable("id") Integer id,
             @RequestBody Account payload) {
-        payload.setId((Integer) id);
-        Map<String, Account> map = new HashMap<>();
-        Account account = accountService.updateAccount(payload);
-        map.put("data", account);
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        if ((Integer) request.getAttribute("roleId") == 2) {
+            payload.setId((Integer) id);
+            Map<String, Account> map = new HashMap<>();
+            Account account = accountService.updateAccount(payload);
+            map.put("data", account);
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        } else {
+            throw new EtAuthException("Unauthorized");
+        }
     }
 
     @GetMapping("/accounts/{id}")
@@ -61,6 +73,7 @@ public class AccountController {
         Account account = accountService.findAccount(id);
         map.put("data", account);
         return new ResponseEntity<>(map, HttpStatus.OK);
+
     }
 
     private Map<String, String> generateJWTToken(Account account) {

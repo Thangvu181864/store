@@ -13,7 +13,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import edu.huce.store.exceptions.EtAuthException;
 import edu.huce.store.exceptions.EtBadRequestException;
 import edu.huce.store.exceptions.EtResourceNotFoundException;
 import edu.huce.store.models.Account;
@@ -25,7 +24,7 @@ public class AccountRepositoryImpl implements AccountRepository {
     JdbcTemplate jdbcTemplate;
 
     @Override
-    public Integer create(Account account) throws EtAuthException {
+    public Integer create(Account account) {
         try {
             String hashedPassword = BCrypt.hashpw(account.getPassword(), BCrypt.gensalt(10));
             String SQL_CREATE = "INSERT Accounts( username, password, roleId, note) VALUES( ?, ?, ?, ?)";
@@ -38,17 +37,21 @@ public class AccountRepositoryImpl implements AccountRepository {
                 ps.setString(4, account.getNote());
                 return ps;
             }, keyHolder);
+
+            // khi insert id tự tăng .keyholder lấy id tự tạo
             return Integer.parseInt(keyHolder.getKeys().get("GENERATED_KEYS").toString());
         } catch (Exception e) {
-            throw new EtAuthException("Invalid details. Failed to create account");
+            throw new EtBadRequestException("Invalid details. Failed to create account :" + e.getMessage());
         }
     }
 
     @Override
-    public Account findByUsernameAndPassword(Account account) throws EtBadRequestException {
+    public Account findByUsernameAndPassword(Account account) {
         try {
             String SQL_FIND_BY_USERNAME = "SELECT id, username, password, roleId, note FROM Accounts WHERE destroy = 0 AND username = '"
                     + account.getUsername() + "'";
+            // BeanPropertyRowMapper chuyển đổi định dạng bảng kết quả của câu lệnh query
+            // sang class
             List<Account> result = jdbcTemplate.query(SQL_FIND_BY_USERNAME,
                     BeanPropertyRowMapper.newInstance(Account.class));
 
@@ -59,7 +62,7 @@ public class AccountRepositoryImpl implements AccountRepository {
                 throw new EtBadRequestException("Invalid email/password");
             return result.get(0);
         } catch (EmptyResultDataAccessException e) {
-            throw new EtBadRequestException("Invalid email/password");
+            throw new EtBadRequestException("Invalid email/password " + e.getMessage());
         }
     }
 
@@ -73,14 +76,26 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public Account findById(Integer id) {
-        String SQL_FIND_BY_ID = "SELECT id, username, roleId, note FROM Accounts WHERE destroy = 0 AND id = '" + id + "'";
-        List<Account> account = jdbcTemplate.query(SQL_FIND_BY_ID, BeanPropertyRowMapper.newInstance(Account.class));
-        return account.get(0);
+        try {
+            String SQL_FIND_BY_ID = "SELECT id, username, roleId, note FROM Accounts WHERE destroy = 0 AND id = '" + id
+                    + "'";
+            List<Account> account = jdbcTemplate.query(SQL_FIND_BY_ID,
+                    BeanPropertyRowMapper.newInstance(Account.class));
+            if (account.size() == 0) {
+                throw new EtResourceNotFoundException("Not found");
+
+            } else {
+
+                return account.get(0);
+            }
+        } catch (Exception e) {
+            throw new EtBadRequestException(e.getMessage());
+        }
+
     }
 
     @Override
-    public Integer update(Account account)
-            throws EtBadRequestException {
+    public Integer update(Account account) {
         try {
             String hashedPassword = BCrypt.hashpw(account.getPassword(), BCrypt.gensalt(10));
             String SQL_UPDATE = "UPDATE Accounts SET username = ?, password = ? ,roleId = ?, note = ? WHERE destroy = 0 AND id = ?";

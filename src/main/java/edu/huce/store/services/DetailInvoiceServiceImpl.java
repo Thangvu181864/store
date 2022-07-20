@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import edu.huce.store.exceptions.EtResourceNotFoundException;
+import edu.huce.store.exceptions.EtBadRequestException;
 import edu.huce.store.models.DetailInvoice;
 import edu.huce.store.repositories.DetailInvoiceRepository;
 
@@ -21,13 +21,20 @@ public class DetailInvoiceServiceImpl implements DetailInvoiceService {
     }
 
     @Override
-    public DetailInvoice fetchDetailInvoiceById(Integer id) throws EtResourceNotFoundException {
+    public DetailInvoice fetchDetailInvoiceById(Integer id) {
         return detailInvoiceRepository.findById(id);
     }
 
     @Override
     public DetailInvoice addDetailInvoice(DetailInvoice detailInvoices) {
-        Integer id = detailInvoiceRepository.create(detailInvoices);
-        return detailInvoiceRepository.findById(id);
+        if (detailInvoices.getProductId() != null && detailInvoices.getPriceSell() != null
+                && detailInvoices.getQuantity() != null) {
+
+            Integer id = detailInvoiceRepository.create(detailInvoices);
+            return detailInvoiceRepository.findById(id);
+        } else {
+            throw new EtBadRequestException("Every field is requied");
+
+        }
     }
 }

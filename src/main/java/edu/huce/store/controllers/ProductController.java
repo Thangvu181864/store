@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.huce.store.exceptions.EtAuthException;
 import edu.huce.store.models.Product;
 import edu.huce.store.services.ProductService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,27 +48,40 @@ public class ProductController {
     @PostMapping("/create")
     public ResponseEntity<Map<String, Product>> CreateProduct(HttpServletRequest request,
             @RequestBody Product payload) {
-        Product product = productService.addProduct(payload);
-        Map<String, Product> map = new HashMap<>();
-        map.put("data", product);
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        if ((Integer) request.getAttribute("roleId") == 2) {
+            Product product = productService.addProduct(payload);
+            Map<String, Product> map = new HashMap<>();
+            map.put("data", product);
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        } else {
+            throw new EtAuthException("Unauthorized");
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, String>> DeleteProductById(@PathVariable("id") Integer id) {
-        Integer productId = productService.deleteProductById(id);
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("data", "Delete productId: " + productId + " successful");
-        return new ResponseEntity<>(map, HttpStatus.OK);
+    public ResponseEntity<Map<String, String>> DeleteProductById(HttpServletRequest request,
+            @PathVariable("id") Integer id) {
+        if ((Integer) request.getAttribute("roleId") == 2) {
+            Integer productId = productService.deleteProductById(id);
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("data", "Delete productId: " + productId + " successful");
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        } else {
+            throw new EtAuthException("Unauthorized");
+        }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Product>> UpdateProduct(HttpServletRequest request,
             @PathVariable("id") Integer id,
             @RequestBody Product payload) {
-        Product product = productService.updateProduct(id, payload);
-        Map<String, Product> map = new HashMap<>();
-        map.put("data", product);
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        if ((Integer) request.getAttribute("roleId") == 2) {
+            Product product = productService.updateProduct(id, payload);
+            Map<String, Product> map = new HashMap<>();
+            map.put("data", product);
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        } else {
+            throw new EtAuthException("Unauthorized");
+        }
     }
 }
